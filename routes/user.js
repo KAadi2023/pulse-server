@@ -1,10 +1,12 @@
 import express from 'express';
-import { login } from '../controllers/user.js';
+import { login, register } from '../controllers/user.js';
+import { singleAvatar } from '../middlewares/multer.js';
 
 const app = express.Router();
 
 // Define routes
-app.get("/login", login)
+app.post("/register", singleAvatar, register);
+app.post("/login", login)
 
 export default app;
 
