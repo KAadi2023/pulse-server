@@ -1,6 +1,8 @@
 import { compare } from 'bcrypt';
 import { User } from '../models/user.js'
-import { sendToken } from '../utils/common.js';
+import { cookieOptions, sendToken } from '../utils/common.js';
+import { TryCatch } from '../middlewares/error.js';
+import { ErrorHandler } from '../utils/utility.js';
 
 // create the new user and save it to the database and save in cookies and save token
 const register = async (req, res) => {
@@ -23,18 +25,35 @@ const register = async (req, res) => {
     sendToken(res, user, 201, "User created successfully")
 }
 
-const login = async (req, res) => {
+// login the user and save in cookies and save token
+const login = TryCatch(
+    async (req, res, next) => {
+        const { username, password } = req.body;
+        // find the user by username and validate password
+        const user = await User.findOne({ username }).select("+password");
 
-    const { username, password } = req.body;
-    // find the user by username and validate password
-    const user = await User.findOne({ username }).select('+password');
+        if (!user) return next(new ErrorHandler('Invalid Username or Password', 404));
 
-    if (!user) return res.status(404).json({ message: "User not found" });
+        const isMatch = await compare(password, user.password);
+        if (!isMatch) return next(new ErrorHandler('Invalid Username or Password', 404));
 
-    const isMatch = await compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ message: "Invalid password" });
+        sendToken(res, user, 200, `Welcome Back, ${user.name}`);
+    }
+);
 
-    sendToken(res, user, 200, `Welcome Back, ${user.name}`);
-};
+const getMyProfile = TryCatch(async (req, res) => {
+    const user = await User.findById(req.userId);
+    res.status(200).json({
+        success: true,
+        user
+    });
+});
 
-export { login, register };
+const logout = TryCatch(async (req, res) => {
+    res.status(200).cookie("pulse-token", "", {...cookieOptions, maxAge: 0}).json({
+        success: true,
+        message: "Logged out successfully"
+    });
+});
+
+export { login, register, getMyProfile, logout };
