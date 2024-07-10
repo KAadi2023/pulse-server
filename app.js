@@ -1,9 +1,11 @@
 import express from 'express';
-import userRoute from './routes/user.js'
 import { connectToDB } from './utils/common.js';
 import dotenv from 'dotenv'
 import { errorMiddleware } from './middlewares/error.js';
 import cookieParser from 'cookie-parser';
+
+import userRoute from './routes/user.js'
+import chatRoute from './routes/chat.js'
 
 dotenv.config({
     path: './.env'
@@ -12,7 +14,8 @@ dotenv.config({
 const MONGODB_URI = process.env.MONGODB_URI;
 const port = process.env.PORT || 3000
 
-connectToDB(MONGODB_URI)
+connectToDB(MONGODB_URI);
+
 
 const app = express();
 
@@ -28,6 +31,7 @@ app.get('/', (req, res) => {
 
 // user routes
 app.use("/user", userRoute);
+app.use("/chat", chatRoute);
 
 app.use(errorMiddleware);
 
