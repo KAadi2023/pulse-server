@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 
 import userRoute from './routes/user.js'
 import chatRoute from './routes/chat.js'
+import { createMessagesInAGroup } from './seeders/chat.js';
 
 dotenv.config({
     path: './.env'
@@ -16,6 +17,7 @@ const port = process.env.PORT || 3000
 
 connectToDB(MONGODB_URI);
 
+// createMessagesInAGroup("669372d0aa009d987e945dd6", 50);
 
 const app = express();
 
