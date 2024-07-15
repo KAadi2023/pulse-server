@@ -1,9 +1,11 @@
 import { compare } from 'bcrypt';
 import { User } from '../models/user.js'
 import { Chat } from '../models/chat.js'
-import { cookieOptions, sendToken } from '../utils/common.js';
+import { Request } from '../models/request.js'
+import { cookieOptions, emitEvent, sendToken } from '../utils/common.js';
 import { TryCatch } from '../middlewares/error.js';
 import { ErrorHandler } from '../utils/utility.js';
+import { NEW_REQUEST } from '../constants/events.js';
 
 // create the new user and save it to the database and save in cookies and save token
 const register = async (req, res) => {
@@ -89,4 +91,24 @@ const searchUser = TryCatch(async (req, res) => {
     });
 });
 
-export { login, register, getMyProfile, logout, searchUser };
+const sendFriendRequest = TryCatch(async (req, res) => {
+    const { userId } = req.body;
+
+    const request = await Request.findOne({})
+
+    if (request) return next(new ErrorHandler('Friend request already sent', 409));
+
+    const newRequest = await Request.create({
+        sender: req.userId,
+        receiver: userId
+    });
+
+    emitEvent(req, NEW_REQUEST, [userId]);
+
+    res.status(200).json({
+        success: true,
+        message: "Friend Request Sent"
+    });
+});
+
+export { login, register, getMyProfile, logout, searchUser, sendFriendRequest };
