@@ -1,5 +1,6 @@
 import { compare } from 'bcrypt';
 import { User } from '../models/user.js'
+import { Chat } from '../models/chat.js'
 import { cookieOptions, sendToken } from '../utils/common.js';
 import { TryCatch } from '../middlewares/error.js';
 import { ErrorHandler } from '../utils/utility.js';
@@ -50,7 +51,7 @@ const getMyProfile = TryCatch(async (req, res) => {
 });
 
 const logout = TryCatch(async (req, res) => {
-    res.status(200).cookie("pulse-token", "", {...cookieOptions, maxAge: 0}).json({
+    res.status(200).cookie("pulse-token", "", { ...cookieOptions, maxAge: 0 }).json({
         success: true,
         message: "Logged out successfully"
     });
@@ -60,9 +61,31 @@ const searchUser = TryCatch(async (req, res) => {
 
     const { name } = req.query;
 
+    // all my chats
+    const myChats = await Chat.find({
+        groupChat: false,
+        members: req.userId
+    })
+
+    // extracted  all users from my chats, means friend or people i have chatted with
+    const allUsersFromMyChats = myChats.flatMap((chat) => chat.members);
+
+    // all users except me and my friends
+    const allUsersExceptMeAndFriends = await User.find({
+        _id: { $nin: allUsersFromMyChats },
+        name: { $regex: name, $options: 'i' }
+    })
+
+    // modifying results
+    const users = allUsersExceptMeAndFriends.map(({ _id, name, avatar }) => ({
+        _id,
+        name,
+        avatar: avatar.url
+    }))
+
     res.status(200).json({
         success: true,
-        message: name
+        users
     });
 });
 
