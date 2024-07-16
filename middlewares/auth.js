@@ -1,6 +1,7 @@
 import { ErrorHandler } from "../utils/utility.js";
 import { TryCatch } from "./error.js";
 import jwt from 'jsonwebtoken';
+import { adminSecretKey } from '../app.js'
 
 const isAuthenticated = (req, res, next) => {
     const token = req.cookies["pulse-token"]
@@ -16,4 +17,20 @@ const isAuthenticated = (req, res, next) => {
 
 }
 
-export { isAuthenticated }
+const adminOnly = (req, res, next) => {
+    const token = req.cookies["pulse-admin-token"]
+
+    if (!token) return next(new ErrorHandler("Only Admin can access this routes", 401));
+
+    // Verify JWT token here
+    const secretKey = jwt.verify(token, process.env.ADMIN_SECRET_KEY);
+
+    if (secretKey !== adminSecretKey) {
+        return next(new ErrorHandler("Invalid Admin secret key", 401));
+    }
+
+    next();
+
+}
+
+export { isAuthenticated, adminOnly }

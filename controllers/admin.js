@@ -2,7 +2,44 @@ import { TryCatch } from "../middlewares/error.js";
 import { Chat } from "../models/chat.js";
 import { Message } from "../models/message.js";
 import { User } from "../models/user.js";
+import { ErrorHandler } from "../utils/utility.js";
+import jwt from 'jsonwebtoken';
+import { cookieOptions } from '../utils/common.js'
+import { adminSecretKey } from "../app.js";
 
+const adminLogin = TryCatch(async (req, res, next) => {
+    const { secretKey } = req.body;
+
+    if (secretKey !== adminSecretKey) {
+        return next(new ErrorHandler("Invalid Admin secret key", 401));
+    }
+
+    const token = jwt.sign(secretKey, process.env.JWT_SECRET);
+
+    return res.status(200).cookie("pulse-admin-token", token, {
+        ...cookieOptions,
+        maxAge: 1000 * 60 * 15 // 15 min
+    }).json({
+        success: true,
+        message: "Authentication successful, Welcome Boss!",
+    });
+})
+
+const adminLogout = TryCatch(async (req, res, next) => {
+    return res.status(200).cookie("pulse-admin-token", "", {
+        ...cookieOptions,
+        maxAge: 0
+    }).json({
+        success: true,
+        message: "Logged out successfully"
+    });
+})
+
+const getAdminData = TryCatch(async (req, res, next) => {
+    return res.status(200).json({
+        admin: true
+    })
+})
 
 const allUsers = TryCatch(async (req, res) => {
     const users = await User.find({});
@@ -138,6 +175,9 @@ const getDashboardStats = TryCatch(async (req, res) => {
 })
 
 export {
+    adminLogin,
+    adminLogout,
+    getAdminData,
     allUsers,
     allChats,
     allMessages,

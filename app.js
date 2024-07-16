@@ -14,7 +14,9 @@ dotenv.config({
 })
 
 const MONGODB_URI = process.env.MONGODB_URI;
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 3000;
+
+export const adminSecretKey = process.env.ADMIN_SECRET_KEY || "aadi.pulse@gmail.com";
 
 connectToDB(MONGODB_URI);
 
