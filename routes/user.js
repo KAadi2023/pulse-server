@@ -10,6 +10,7 @@ import {
     sendFriendRequest,
     getMyNotifications,
     acceptFriendRequest,
+    getMyFriends,
 } from '../controllers/user.js';
 import {
     loginValidator,
@@ -34,6 +35,7 @@ app.get("/search", searchUser);
 app.put("/send-req", sendFriendRequestValidator(), validateHandler, sendFriendRequest);
 app.put("/accept-req", AcceptFriendRequestValidator(), validateHandler, acceptFriendRequest);
 app.get("/notifications", getMyNotifications);
+app.get("/friends", getMyFriends);
 
 export default app;
 
