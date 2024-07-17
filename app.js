@@ -8,6 +8,7 @@ import userRoute from './routes/user.js'
 import chatRoute from './routes/chat.js'
 import adminRoute from './routes/admin.js'
 import { createMessagesInAGroup } from './seeders/chat.js';
+import cors from 'cors';
 
 dotenv.config({
     path: './.env'
@@ -28,6 +29,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 
 // home routes
 app.get('/', (req, res) => {
