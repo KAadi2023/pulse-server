@@ -23,7 +23,7 @@ const adminOnly = (req, res, next) => {
     if (!token) return next(new ErrorHandler("Only Admin can access this routes", 401));
 
     // Verify JWT token here
-    const secretKey = jwt.verify(token, process.env.ADMIN_SECRET_KEY);
+    const secretKey = jwt.verify(token, process.env.JWT_SECRET);
 
     if (secretKey !== adminSecretKey) {
         return next(new ErrorHandler("Invalid Admin secret key", 401));
