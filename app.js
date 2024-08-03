@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import { Server } from 'socket.io';
 import { createServer } from 'http'
 import { v4 as uuid } from 'uuid'
+import cors from 'cors'
 
 import userRoute from './routes/user.js'
 import chatRoute from './routes/chat.js'
@@ -39,6 +40,7 @@ const io = new Server(server, {});
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 
 // home routes
 app.get('/', (req, res) => {
