@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import jwt from 'jsonwebtoken';
-import { envMode } from "../app";
+import { envMode } from "../app.js";
 
 const cookieOptions = {
     maxAge: 15 * 24 * 60 * 60 * 1000,
