@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 const cookieOptions = {
     maxAge: 15 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'DEVELOPMENT' ? false : true,
+    secure: process.env.NODE_ENV === 'PRODUCTION',
     sameSite: "none"
 }
 
