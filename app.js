@@ -42,7 +42,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-    origin: 'https://pulse-admin-dashboard.netlify.app/', // Update this with your frontend domain
+    origin: true, // Update this with your frontend domain
     credentials: true
 }));
 
