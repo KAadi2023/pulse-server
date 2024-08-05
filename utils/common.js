@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 import jwt from 'jsonwebtoken';
+import { envMode } from "../app";
 
 const cookieOptions = {
     maxAge: 15 * 24 * 60 * 60 * 1000,
     httpOnly: true,
-    secure: true,
+    secure: envMode === 'DEVELOPMENT' ? false : true,
     sameSite: "none"
 }
 
