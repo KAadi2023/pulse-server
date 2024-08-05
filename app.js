@@ -42,7 +42,10 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-    origin: true, // Update this with your frontend domain
+    origin: [
+        "http://localhost:3000",
+        process.env.CLIENT_URL
+    ],
     credentials: true
 }));
 
