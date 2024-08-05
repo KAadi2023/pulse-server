@@ -19,6 +19,7 @@ const sendToken = (res, user, code, message) => {
 
     return res.status(code).cookie("pulse-token", token, cookieOptions).json({
         success: true,
+        user,
         message
     })
 }
