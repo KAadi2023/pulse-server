@@ -50,14 +50,14 @@ app.use(cors({
 }));
 
 // home routes
-app.get('/', (req, res) => {
+app.get('/api/v1/', (req, res) => {
     res.send('Hello, World!');
 });
 
 // user routes
-app.use("/user", userRoute);
-app.use("/chat", chatRoute);
-app.use("/admin", adminRoute);
+app.use("/api/v1/user", userRoute);
+app.use("/api/v1/chat", chatRoute);
+app.use("/api/v1/admin", adminRoute);
 
 io.use((socket, next) => { })
 
